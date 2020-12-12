@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/skropyvian/Desktop/connect/t00
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/skropyvian/Desktop/esp32_wifi/t00
 -- Found Git: /usr/bin/git (found version "2.20.1 (Apple Git-117)") 
 CMake Warning at /Users/skropyvian/esp/esp-idf/tools/cmake/git_submodules.cmake:52 (message):
   Git submodule components/bt/controller/lib is out of date.  Run 'git
@@ -93,5 +93,5 @@ Call Stack (most recent call first):
 
 -- Warning: Did not find file Compiler/-ASM
 -- Configuring incomplete, errors occurred!
-See also "/Users/skropyvian/Desktop/connect/t00/cmake-build-debug/CMakeFiles/CMakeOutput.log".
-See also "/Users/skropyvian/Desktop/connect/t00/cmake-build-debug/CMakeFiles/CMakeError.log".
+See also "/Users/skropyvian/Desktop/esp32_wifi/t00/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/Users/skropyvian/Desktop/esp32_wifi/t00/cmake-build-debug/CMakeFiles/CMakeError.log".

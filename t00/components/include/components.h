@@ -1,20 +1,35 @@
 #ifndef RTOS_COMPONENTS_H
 #define RTOS_COMPONENTS_H
-
+//standart
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+//
 
+//rtos
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "driver/uart.h"
 #include "esp_system.h"
 #include "driver/gpio.h"
+//
 
+//wifi
+#include "freertos/event_groups.h"
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_log.h"
+#include "nvs_flash.h"
+
+#include "lwip/err.h"
+#include "lwip/sys.h"
+//
+
+//#include "wifi.h"
 
 #define UART_TX_PIN                     17
 #define UART_RX_PIN                     16
@@ -32,17 +47,23 @@
 #define DELETE                          127
 
 typedef struct s_dht11 {
+    uint64_t time;
     int temp;
     int hum;
-    uint64_t time;
 } t_dht11;
 
 typedef struct s_list {
     t_dht11     data;
     struct      s_list *next;
-}               t_list;
+} t_list;
+
+typedef struct s_wifi {
+    char ssid[32];
+    char password[64];
+} t_wifi;
 
 typedef struct s_app {
+    t_wifi *wf;
     uint8_t *buf;
     char *str_for_execute;
     int iterator;

@@ -1,1 +1,2 @@
-idf_component_register( INCLUDE_DIRS "." )
+idf_component_register( INCLUDE_DIRS "."
+                        REQUIRES nvs_flash)

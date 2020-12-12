@@ -1,19 +1,17 @@
-#include "main.h"
+#include "uart_console.h"
 
-QueueHandle_t uart_queue;
-
-void init_console_data(t_app *app) {
-    app->stack = NULL;
-    app->buf = malloc(BUF_SIZE);
-    app->str_for_execute = malloc(SIZE_STR_FOR_EXECUTE);
+void  init_main_struct_data(t_app *app) {
+    app->wf = (t_wifi *)malloc(sizeof(t_wifi));
+    app->buf = (uint8_t *)malloc(BUF_SIZE);
+    app->str_for_execute = (char *)malloc(SIZE_STR_FOR_EXECUTE);
     memset(app->str_for_execute, 0, SIZE_STR_FOR_EXECUTE);
+    app->stack = NULL;
     app->iterator = 0;
     app->len = 0;
 }
 
 void uart_config(void) {
-    uart_config_t uart_config =
-            {
+    uart_config_t uart_config = {
                     .baud_rate = 9600,
                     .data_bits = UART_DATA_8_BITS,
                     .parity = UART_PARITY_DISABLE,
@@ -29,7 +27,7 @@ void uart_config(void) {
 
 static void print_command_list() {
     char *arr_com[10];
-    arr_com[0] = "\x1b[36mlog\x1b[0m           displaying temperature and humidity in console\n\r";
+    arr_com[0] = "\x1b[36mlog\x1b[0m           displaying temperature and humidity in uart_console\n\r";
     arr_com[1] = "\x1b[36mled on\x1b[0m        [LED number(1 - 3)]\n\r";
     arr_com[2] = "\x1b[36mled off\x1b[0m       [LED number(1 - 3)]\n\r";
     arr_com[3] = "\x1b[36mled pulse\x1b[0m     [LED number(1 - 3)], [frequency(0.1 - 1.9)]\n\r";
@@ -44,22 +42,18 @@ static void print_command_list() {
         uart_write_bytes(UART_NUM_1, arr_com[i], strlen(arr_com[i]));
 }
 
+
+
 int send_for_execute(t_app *app) {
     int exit_status = -1;
     char **argv = mx_strsplit(app->str_for_execute, ' ' );
     int argc = mx_arr_size(argv);
 
     if (argc) {
-        if (!strcmp("clock", argv[0]) && !argv[1]) {
-            xTaskCreate(&timer_task, "timer_task", 4096,
-                        app, 3, &app->clock);
-            xTaskCreate(data_to_oled, "data_to_oled", 4096,
-                        app, 4, NULL);
+        if (!strcmp("sta_state", argv[0])) {
+            exit_status  = check_wifi_arg(argv, argc, app);
         }
-        else if(!strcmp("set_time", argv[0])) {
-           exit_status = set_time(argv);
-        }
-        else if(!strcmp("clear", argv[0]) && !argv[1]) {
+        else if (!strcmp("clear", argv[0]) && !argv[1]) {
             uart_write_bytes(UART_NUM_1, "\e[2J",sizeof("\e[2J"));
             uart_write_bytes(UART_NUM_1, "\e[0;0f",sizeof("\e[0;0f"));
         }
@@ -85,14 +79,14 @@ void handling_ENTER(t_app *app, t_list *history) {
     send_for_execute(app);
     app->iterator = 0;
     app->history_iterator = 0;
-    memset( app->str_for_execute, 0, SIZE_STR_FOR_EXECUTE );
+    memset(app->str_for_execute, 0, SIZE_STR_FOR_EXECUTE);
 }
 
 void handling_DELETE(t_app *app) {
     if (app->iterator == strlen(app->str_for_execute ) && app->iterator > 0) {
-        uart_write_bytes( UART_NUM_1, "\e[1D", sizeof( "\e[1D" ));
-        uart_write_bytes( UART_NUM_1, " ", 1 );
-        uart_write_bytes( UART_NUM_1, "\e[1D", sizeof( "\e[1D" ));
+        uart_write_bytes(UART_NUM_1, "\e[1D", sizeof( "\e[1D"));
+        uart_write_bytes(UART_NUM_1, " ", 1 );
+        uart_write_bytes(UART_NUM_1, "\e[1D", sizeof( "\e[1D"));
         app->str_for_execute[strlen(app->str_for_execute) - 1] = '\0';
         (app->iterator > 0) ? app->iterator-- : 0;
     }
