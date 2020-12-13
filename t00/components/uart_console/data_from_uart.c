@@ -50,7 +50,7 @@ int send_for_execute(t_app *app) {
     int argc = mx_arr_size(argv);
 
     if (argc) {
-        if (!strcmp("sta_state", argv[0])) {
+        if (!strcmp("connect", argv[0])) {
             exit_status  = check_wifi_arg(argv, argc, app);
         }
         else if (!strcmp("clear", argv[0]) && !argv[1]) {
